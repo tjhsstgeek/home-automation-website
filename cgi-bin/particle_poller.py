@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+
+import cgi
 import json
 import os
 import requests
@@ -8,19 +10,25 @@ import time
 from pprint import pprint
 from urllib2 import urlopen, URLError
 
-base_url = 'https://api.particle.io/v1'
+BASE_URL = 'https://api.particle.io/v1'
+ACCESS_TOKEN = '61d3643c20fc05c2cdc5c42f3d0e80d6b56638e5'
 
 
-wire_device_id = '23002e000a51353335323535'
 furnace_device_id = 'garbage value from KESH'
+wire_device_id = '23002e000a51353335323535'
 
 
 # dictionary
 target_map = {
-	'samtest':		wire_device_id,
+	'wire_state':		wire_device_id,
 	'furnace_val':		furnace_device_id,
 	'other_furnace_val':	furnace_device_id
 }
+
+
+form = cgi.FieldStorage()
+target = form.getvalue('target')
+
 
 # checks that target is a field in target_map
 if target not in target_map:
@@ -30,12 +38,10 @@ if target not in target_map:
 	print 'FORBIDDEN'
 	os.exit(1) # error occured
 
-access_token = '61d3643c20fc05c2cdc5c42f3d0e80d6b56638e5'
-
 
 device_id = target_map[target]
 get_var_url = '%s/devices/%s/%s?access_token=%s' % (
-		base_url, device_id, target, access_token)
+		BASE_URL, device_id, target, ACCESS_TOKEN)
 
 response = json.loads(requests.get(get_var_url).content)
 
